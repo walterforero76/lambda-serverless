@@ -4,7 +4,7 @@ from boto3.dynamodb.conditions import Key
 
 DYNAMO_BD = os.environ['DYNAMO_BD']
 
-# hola hoy es 18 sep 10.32 y estamos con fer, jer, by, d, d, du :) 
+# hola esta es otra actualización
 
 class DynamoAccessor:
     def __init__(self, dynamo_table):
