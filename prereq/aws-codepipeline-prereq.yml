@@ -6,42 +6,6 @@ Resources:
     Type: AWS::SNS::Topic
     Properties:
         TopicName: approval-prd  
-  KMSKey:
-    Type: "AWS::KMS::Key"
-    Properties:
-      Enabled: true
-      KeyPolicy:
-        Version: "2012-10-17"
-        Statement:
-          - Sid: "Enable IAM User Permissions"
-            Effect: "Allow"
-            Principal:
-              AWS: !Sub arn:aws:iam::${AWS::AccountId}:root
-            Action:
-              - "kms:*"
-            Resource: "*"
-          - Sid: "Allow access for Key Administrators"
-            Effect: "Allow"
-            Principal:
-              AWS:
-                - !Sub arn:aws:iam::${AWS::AccountId}:root
-            Action:
-              - "kms:Create*"
-              - "kms:Describe*"
-              - "kms:Enable*"
-              - "kms:List*"
-              - "kms:Put*"
-              - "kms:Update*"
-              - "kms:Revoke*"
-              - "kms:Disable*"
-              - "kms:Get*"
-              - "kms:Delete*"
-              - "kms:TagResource"
-              - "kms:UntagResource"
-              - "kms:ScheduleKeyDeletion"
-              - "kms:CancelKeyDeletion"
-            Resource: "*"
-
   S3ArtifactsBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -110,11 +74,6 @@ Resources:
                 Resource: "*"
               - Effect: Allow
                 Action:
-                  - kms:*
-                Resource:
-                  - !GetAtt KMSKey.Arn
-              - Effect: Allow
-                Action:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
@@ -164,17 +123,8 @@ Resources:
                   - lambda:ListFunctions
                   - s3:*
                   - iam:PassRole
-                  - cloudformation:DescribeStacks
+                  - cloudformation:*
                 Resource: "*"
-              - Effect: Allow
-                Action:
-                  - kms:DescribeKey
-                  - kms:GenerateDataKey*
-                  - kms:Encrypt
-                  - kms:ReEncrypt*
-                  - kms:Decrypt
-                Resource:
-                  - !GetAtt KMSKey.Arn
 
   LambdaPolicyEC2:
       Type: AWS::IAM::ManagedPolicy
@@ -293,14 +243,7 @@ Resources:
                         - s3:*
                     Resource:
                         - "*" 
-
-
-
 Outputs:
-  PipelineCMKey:
-    Value: !GetAtt KMSKey.Arn
-    Export:
-      Name: PipelineCMKey
   PipelineRole:
     Value: !GetAtt CodePipelineRole.Arn
     Export:
